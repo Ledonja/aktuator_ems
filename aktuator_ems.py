@@ -40,13 +40,20 @@ def sql_read():
     cnx = mysql.connector.connect(**config)
     cursor = cnx.cursor(buffered=True)
 
-    query = ("SELECT activity, value FROM ems_history WHERE datetime > NOW() - INTERVAL 1 MINUTE AND id_sender = 1 AND id_receiver = 2")
-
+    # Reading data from SQL database
+    query = "SELECT activity, value FROM ems_history WHERE datetime > " \
+            "NOW() - INTERVAL 60 MINUTE AND idsender = 1 AND idreceiver = 2 AND flag = 0"
     cursor.execute(query)
-
     frame = cursor.fetchall()
-
     print(frame)
+
+    # Update flag to 1 in read frame
+    # query = "UPDATE ems_history SET flag = 1 WHERE id = "
+
+    # Writing data to SQL database
+    query = "INSERT INTO ems_history (idsender, idreceiver, activity, value, datetime) VALUES (2, 1, 'b', 80, NOW())"
+    cursor.execute(query)
+    cnx.commit()
 
     cursor.close()
     cnx.close()
